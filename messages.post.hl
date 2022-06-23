@@ -10,7 +10,7 @@
 .type:crud-create
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, user
+auth.ticket.verify:root, admin, guest
 
 // Making sure we associate ticket with user.
 auth.ticket.get

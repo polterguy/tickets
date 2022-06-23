@@ -10,7 +10,7 @@
 
 // Verifying user is authorized to access endpoint.
 validators.mandatory:x:@.arguments/*/id
-auth.ticket.verify:root, admin, user
+auth.ticket.verify:root, admin, guest
 .foreign-keys
    .
       column:department

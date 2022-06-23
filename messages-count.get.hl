@@ -9,7 +9,7 @@
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, user
+auth.ticket.verify:root, admin, guest
 
 // Making sure user can only retrieve messages that belongs to his own tickets.
 auth.ticket.get
