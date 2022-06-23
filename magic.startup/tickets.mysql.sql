@@ -50,8 +50,10 @@ create table tickets (
  */
 create table messages (
   id int(11) not null auto_increment,
+  ticket int(11) not null,
   created datetime not null default current_timestamp,
   user nvarchar(256) not null,
   description text not null,
+  constraint messages_tickets_fky foreign key (ticket) references tickets (id),
   primary key (id)
 );

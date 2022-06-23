@@ -1,0 +1,37 @@
+
+/*
+ * Template for HTTP POST CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   description:string
+.description:Creates an item in your messages table in your [generic|tickets] database according to the specified arguments
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin, user
+
+// Making sure we associate ticket with user.
+auth.ticket.get
+
+// Opening up database connection.
+data.connect:[generic|tickets]
+   database-type:mysql
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:mysql
+      table:messages
+      return-id:bool:true
+      values
+         user:x:@auth.ticket.verify
+
+   // Returning result of above invoction to caller.
+   response.status.set:201
+   unwrap:x:+/*
+   return
+      id:x:@data.create
