@@ -17,6 +17,19 @@ insert into status(name) values ('Open');
 insert into status(name) values ('Closed');
 
 /*
+ * Contains all priority types in the system.
+ */
+create table priorities (
+  name varchar(50),
+  primary key (name)
+);
+
+insert into priorities(name) values ('Low');
+insert into priorities(name) values ('Normal');
+insert into priorities(name) values ('High');
+insert into priorities(name) values ('Critical');
+
+/*
  * Contains all departments in system.
  */
 create table departments(
