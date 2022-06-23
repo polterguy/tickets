@@ -46,6 +46,39 @@ data.connect:[generic|tickets]
          user:x:@auth.ticket.get
          status:Open
 
+   // Retrieving user's name and email address.
+   .email
+   .name
+   data.connect:magic
+      database-type:mysql
+      data.read
+         database-type:mysql
+         table:users_extra
+         values
+            type
+            name
+         where
+            and
+               user.eq:x:@auth.ticket.get
+               or
+                  type.eq:email
+                  type.eq:name
+      set-value:x:@.email
+         get-value:x:@data.read/*/*/type/=email/./*/value
+      set-value:x:@.name
+         get-value:x:@data.read/*/*/type/=name/./*/value
+
+   // Sending user his email receipt of the ticket.
+   unwrap:x:+/**
+   signal:magic.emails.send
+      subject:x:@.arguments/*/title
+      template-file:/modules/tickets/magic.startup/templates/ticket-receipt.html
+      mime-type:text/html
+      substitutes
+         content:x:@.arguments/*/description
+      email:x:@.email
+      name:x:@.name
+   
    // Returning result of above invoction to caller.
    response.status.set:201
    unwrap:x:+/*
