@@ -36,7 +36,6 @@ data.connect:[generic|tickets]
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
    remove-nodes:x:@.arguments/*/limit
    remove-nodes:x:@.arguments/*/offset
    remove-nodes:x:@.arguments/*/order

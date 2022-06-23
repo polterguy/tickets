@@ -28,10 +28,10 @@ data.connect:[generic|tickets]
       database-type:mysql
       table:tickets
       values
+         status:Closed
       where
          and
             id.eq:x:@.arguments/*/id
-            status:Closed
 
    // Verifying record exists.
    if

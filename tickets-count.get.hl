@@ -19,14 +19,14 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
+// Ensuring we're only counting items belonging to currently authenticated user.
+auth.ticket.get
+
 // Opening up our database connection.
 data.connect:[generic|tickets]
    database-type:mysql
 
    // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/operator
    add:x:+/*/where/*
       get-nodes:x:@.arguments/*
 
