@@ -1,0 +1,33 @@
+
+/*
+ * Template for HTTP POST CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   name:string
+.description:Creates an item in your status table in your [generic|tickets] database according to the specified arguments
+.type:crud-create
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin
+
+// Opening up database connection.
+data.connect:[generic|tickets]
+   database-type:mysql
+
+   // Parametrising our create invocation.
+   add:x:./*/data.create/*/values
+      get-nodes:x:@.arguments/*
+
+   // Creating our record.
+   data.create
+      database-type:mysql
+      table:status
+      return-id:bool:false
+      values
+
+   // Returning result of above invoction to caller.
+   response.status.set:201
+   unwrap:x:+/*
+   return
+      result:success

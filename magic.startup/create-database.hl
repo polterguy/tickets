@@ -1,0 +1,11 @@
+
+/*
+ * Runs during startup of Magic, and basically just ensures the module's database exists,
+ * and is updated by running migration scripts after attempting to create the database.
+ * 
+ * If the database doesn't exist, this script will create it by executing the "tickets.mysql.sql"
+ * SQL file.
+ */
+signal:magic.modules.ensure-database
+   module:tickets
+   database:tickets

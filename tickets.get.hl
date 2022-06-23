@@ -1,0 +1,79 @@
+
+/*
+ * Template for HTTP GET CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   operator:string
+   tickets.id.eq:long
+   tickets.user.like:string
+   tickets.user.eq:string
+   tickets.status.like:string
+   tickets.status.eq:string
+   tickets.department.like:string
+   tickets.department.eq:string
+   tickets.title.like:string
+   tickets.title.eq:string
+   tickets.description.like:string
+   tickets.description.eq:string
+.description:Returns items from your tickets table in your [generic|tickets] database according to the specified arguments
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Sanity checking invocation.
+validators.enum:x:@.arguments/*/operator
+   .:or
+   .:and
+
+/*
+ * Checking if user supplied an [operator] argument, and if so
+ * changing the boolean operator for comparison operations.
+ */
+if
+   exists:x:@.arguments/*/operator
+   .lambda
+
+      // User provided a boolean comparison [operator] argument.
+      set-name:x:../*/data.connect/*/data.read/*/where/*
+         get-value:x:@.arguments/*/operator
+
+// Opening up our database connection.
+data.connect:[generic|tickets]
+   database-type:mysql
+
+   // Parametrising our read invocation.
+   add:x:./*/data.read
+      get-nodes:x:@.arguments/*/limit
+      get-nodes:x:@.arguments/*/offset
+      get-nodes:x:@.arguments/*/order
+      get-nodes:x:@.arguments/*/direction
+   remove-nodes:x:@.arguments/*/operator
+   remove-nodes:x:@.arguments/*/limit
+   remove-nodes:x:@.arguments/*/offset
+   remove-nodes:x:@.arguments/*/order
+   remove-nodes:x:@.arguments/*/direction
+   add:x:./*/data.read/*/where/*
+      get-nodes:x:@.arguments/*
+
+   // Reading data from database.
+   data.read
+      database-type:mysql
+      table:tickets
+      columns
+         tickets.id
+         tickets.user
+         tickets.status
+         tickets.department
+         tickets.title
+         tickets.description
+      where
+         and
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@data.read/*
