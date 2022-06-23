@@ -22,13 +22,19 @@ auth.ticket.verify:root, admin
       table:status
       foreign_column:name
       foreign_name:name
-      long:bool:true
+      long:bool:false
    .
       column:department
       table:departments
       foreign_column:name
       foreign_name:name
-      long:bool:true
+      long:bool:false
+   .
+      column:priority
+      table:priorities
+      foreign_column:name
+      foreign_name:name
+      long:bool:false
 
 // Opening up our database connection.
 data.connect:[generic|tickets]

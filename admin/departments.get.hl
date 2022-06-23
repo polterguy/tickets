@@ -8,31 +8,11 @@
    offset:long
    order:string
    direction:string
-   operator:string
-   departments.name.like:string
-   departments.name.eq:string
 .description:Returns items from your departments table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin
-
-// Sanity checking invocation.
-validators.enum:x:@.arguments/*/operator
-   .:or
-   .:and
-
-/*
- * Checking if user supplied an [operator] argument, and if so
- * changing the boolean operator for comparison operations.
- */
-if
-   exists:x:@.arguments/*/operator
-   .lambda
-
-      // User provided a boolean comparison [operator] argument.
-      set-name:x:../*/data.connect/*/data.read/*/where/*
-         get-value:x:@.arguments/*/operator
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
@@ -58,6 +38,7 @@ data.connect:[generic|tickets]
          departments.name
       where
          and
+   limit:-1
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*

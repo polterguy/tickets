@@ -9,14 +9,10 @@
    order:string
    direction:string
    tickets.id.eq:long
-   tickets.status.like:string
    tickets.status.eq:string
-   tickets.department.like:string
    tickets.department.eq:string
    tickets.title.like:string
-   tickets.title.eq:string
    tickets.description.like:string
-   tickets.description.eq:string
 .description:Returns items from your tickets table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
 

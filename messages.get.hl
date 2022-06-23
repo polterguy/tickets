@@ -43,7 +43,7 @@ data.connect:[generic|tickets]
             type:inner
             on
                and
-                  tickets.user:messages.user
+                  tickets.id:messages.ticket
       columns
          messages.id
          messages.created
@@ -52,6 +52,7 @@ data.connect:[generic|tickets]
       where
          and
             tickets.user.eq:x:@auth.ticket.get
+      limit:-1
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
