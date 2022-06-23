@@ -44,3 +44,14 @@ create table tickets (
   constraint tickets_departments_fky foreign key (department) references departments (name),
   primary key (id)
 );
+
+/*
+ * Contains discussions about tickets in the system.
+ */
+create table messages (
+  id int(11) not null auto_increment,
+  created datetime not null default current_timestamp,
+  user nvarchar(256) not null,
+  description text not null,
+  primary key (id)
+);
