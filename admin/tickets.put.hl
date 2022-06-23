@@ -32,7 +32,6 @@ auth.ticket.verify:root, admin
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
    add:x:./*/data.update/*/where/*/and
       get-nodes:x:@.arguments/*/[0,1]
    add:x:./*/data.update/*/values
@@ -40,7 +39,6 @@ data.connect:[generic|tickets]
 
    // Invoking our update slot.
    data.update
-      database-type:mysql
       table:tickets
       values
       where

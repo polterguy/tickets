@@ -14,7 +14,6 @@ validators.mandatory:x:@.arguments/*/name
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
 
    // Parametrising our delete invocation.
    add:x:./*/data.delete/*/where/*/and
@@ -22,7 +21,6 @@ data.connect:[generic|tickets]
 
    // Deleting item from database.
    data.delete
-      database-type:mysql
       table:priorities
       where
          and

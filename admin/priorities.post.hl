@@ -13,7 +13,6 @@ auth.ticket.verify:root, admin
 
 // Opening up database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
 
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values
@@ -21,7 +20,6 @@ data.connect:[generic|tickets]
 
    // Creating our record.
    data.create
-      database-type:mysql
       table:priorities
       return-id:bool:false
       values

@@ -21,11 +21,9 @@ auth.ticket.verify:root, admin, user
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
 
    // Invoking our update slot.
    data.update
-      database-type:mysql
       table:tickets
       values
          status:Closed

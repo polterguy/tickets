@@ -24,7 +24,6 @@ auth.ticket.get
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
 
    // Parametrising our read invocation.
    add:x:+/*/where/*
@@ -32,7 +31,6 @@ data.connect:[generic|tickets]
 
    // Reading data from database.
    data.read
-      database-type:mysql
       table:tickets
       columns
          count(*)

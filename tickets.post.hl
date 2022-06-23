@@ -31,7 +31,6 @@ auth.ticket.verify:root, admin, guest
 
 // Opening up database connection.
 data.connect:[generic|tickets]
-   database-type:mysql
 
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values
@@ -39,7 +38,6 @@ data.connect:[generic|tickets]
 
    // Creating our record.
    data.create
-      database-type:mysql
       table:tickets
       return-id:bool:true
       values
@@ -50,9 +48,7 @@ data.connect:[generic|tickets]
    .email
    .name
    data.connect:magic
-      database-type:mysql
       data.read
-         database-type:mysql
          table:users_extra
          values
             type
