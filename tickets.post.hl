@@ -4,13 +4,14 @@
  * This file was automatically generated using Magic's CRUDifier.
  */
 .arguments
-   user:string
-   status:string
    department:string
    title:string
    description:string
 .description:Creates an item in your tickets table in your [generic|tickets] database according to the specified arguments
 .type:crud-create
+
+// Needed to make sure we associate the ticket with the specified user.
+auth.ticket.get
 
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
@@ -20,13 +21,13 @@ auth.ticket.verify:root, admin, guest
       table:status
       foreign_column:name
       foreign_name:name
-      long:bool:true
+      long:bool:false
    .
       column:department
       table:departments
       foreign_column:name
       foreign_name:name
-      long:bool:true
+      long:bool:false
 
 // Opening up database connection.
 data.connect:[generic|tickets]
@@ -42,6 +43,8 @@ data.connect:[generic|tickets]
       table:tickets
       return-id:bool:true
       values
+         user:x:@auth.ticket.get
+         status:Open
 
    // Returning result of above invoction to caller.
    response.status.set:201

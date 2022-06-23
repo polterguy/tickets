@@ -8,6 +8,9 @@
 .description:Deletes one item from your tickets table in your [generic|tickets] database matching the specified argument(s)
 .type:crud-delete
 
+// Needed to make sure user isn't allowed to delete tickets not belonging to him.
+auth.ticket.get
+
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin
 validators.mandatory:x:@.arguments/*/id
@@ -26,6 +29,7 @@ data.connect:[generic|tickets]
       table:tickets
       where
          and
+            user.eq:x:@auth.ticket.get
 
    // Returning result of above invocation to caller.
    unwrap:x:+/*
