@@ -54,6 +54,7 @@ data.connect:[generic|tickets]
          tickets.department
          tickets.title
          tickets.description
+         tickets.priority
       where
          and
             user.eq:x:@auth.ticket.get

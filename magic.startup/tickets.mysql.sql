@@ -48,7 +48,7 @@ create table tickets (
   id int(11) not null auto_increment,
   created datetime not null default current_timestamp,
   user nvarchar(256) not null,
-  priority int(11) not null default 5,
+  priority nvarchar(50) not null default 'Normal',
   status varchar(50),
   department varchar(50),
   title varchar(2048) not null,
