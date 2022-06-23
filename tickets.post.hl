@@ -65,15 +65,21 @@ data.connect:[generic|tickets]
          get-value:x:@data.read/*/*/type/=name/./*/value
 
    // Sending user his email receipt of the ticket.
-   unwrap:x:+/**
-   signal:magic.emails.send
-      subject:x:@.arguments/*/title
-      template-file:/modules/tickets/magic.startup/templates/ticket-receipt.html
-      mime-type:text/html
-      substitutes
-         content:x:@.arguments/*/description
-      email:x:@.email
-      name:x:@.name
+   if
+      not
+         eq
+            config.get:"magic:smtp:host"
+            .
+      .lambda
+         unwrap:x:+/**
+         signal:magic.emails.send
+            subject:x:@.arguments/*/title
+            template-file:/modules/tickets/magic.startup/templates/ticket-receipt.html
+            mime-type:text/html
+            substitutes
+               content:x:@.arguments/*/description
+            email:x:@.email
+            name:x:@.name
    
    // Returning result of above invoction to caller.
    response.status.set:201
