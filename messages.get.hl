@@ -8,9 +8,7 @@
    offset:long
    order:string
    direction:string
-   messages.id.eq:long
-   messages.description.like:string
-   messages.description.eq:string
+   tickets.id.eq:long
 .description:Returns items from your messages table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
 
@@ -19,6 +17,8 @@ auth.ticket.verify:root, admin
 
 // Making sure user can only retrieve messages that belongs to his own tickets.
 auth.ticket.get
+
+validators.mandatory:x:@.arguments/*/tickets.id.eq
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
@@ -40,7 +40,6 @@ data.connect:[generic|tickets]
    // Reading data from database.
    data.read
       database-type:mysql
-      table:messages
       table:messages
          join:tickets
             type:inner

@@ -55,8 +55,7 @@ data.connect:[generic|tickets]
       table:messages
       return-id:bool:true
       values
-         user:x:@auth.ticket.verify
-         ticket:x:@.arguments/*/ticket
+         user:x:@auth.ticket.get
 
    // Returning result of above invoction to caller.
    response.status.set:201
