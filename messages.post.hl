@@ -5,6 +5,7 @@
  */
 .arguments
    description:string
+   ticket:int
 .description:Creates an item in your messages table in your [generic|tickets] database according to the specified arguments
 .type:crud-create
 
@@ -18,6 +19,32 @@ auth.ticket.get
 data.connect:[generic|tickets]
    database-type:mysql
 
+   // Verifying ticket belongs to user.
+   if
+      not
+         exists:x:@auth.ticket.get/*/roles/=root
+      .lambda
+
+         // Not a root user, hence we need to verify ticket belongs to user.
+         data.read
+            database-type:mysql
+            table:tickets
+            where
+               and
+                  id.eq:x:@.arguments/*/ticket
+                  user.eq:x:@auth.ticket.get
+         if
+            not
+               exists:x:@data.read/*/*
+            .lambda
+
+               // Oops, user tried to comment on a ticket not belonging to him or her.
+               log.error:User tried to comment on ticket not belonging to him or her
+                  user:x:@auth.ticket.get
+               throw:Not found
+                  status:404
+                  public:true
+
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values
       get-nodes:x:@.arguments/*
@@ -29,6 +56,7 @@ data.connect:[generic|tickets]
       return-id:bool:true
       values
          user:x:@auth.ticket.verify
+         ticket:x:@.arguments/*/ticket
 
    // Returning result of above invoction to caller.
    response.status.set:201
