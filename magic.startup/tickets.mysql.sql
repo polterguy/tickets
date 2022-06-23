@@ -13,6 +13,9 @@ create table status (
   primary key (name)
 );
 
+insert into status(name) values ('Open');
+insert into status(name) values ('Closed');
+
 /*
  * Contains all departments in system.
  */
@@ -20,6 +23,9 @@ create table departments(
   name varchar(50),
   primary key (name)
 );
+
+insert into departments(name) values ('Tech');
+insert into departments(name) values ('Invoicing');
 
 
 /*
