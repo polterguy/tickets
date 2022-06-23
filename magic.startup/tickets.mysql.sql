@@ -2,7 +2,6 @@
  * MySQL script creating the primary tickets database.
  */
 
-drop database tickets;
 create database tickets;
 use tickets;
 
