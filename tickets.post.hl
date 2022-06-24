@@ -14,7 +14,7 @@
 auth.ticket.get
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, guest
+auth.ticket.verify:guest
 .foreign-keys
    .
       column:status

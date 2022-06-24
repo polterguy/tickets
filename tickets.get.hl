@@ -17,7 +17,7 @@
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, guest
+auth.ticket.verify:guest
 
 // Needed to make sure we only return tickets for the currently authenticated user.
 auth.ticket.get

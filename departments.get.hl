@@ -8,7 +8,7 @@
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, guest
+auth.ticket.verify:guest
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
