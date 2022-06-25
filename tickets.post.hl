@@ -14,20 +14,7 @@
 auth.ticket.get
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:guest
-.foreign-keys
-   .
-      column:status
-      table:status
-      foreign_column:name
-      foreign_name:name
-      long:bool:false
-   .
-      column:department
-      table:departments
-      foreign_column:name
-      foreign_name:name
-      long:bool:false
+auth.ticket.verify:root, admin, guest
 
 // Opening up database connection.
 data.connect:[generic|tickets]
@@ -43,6 +30,7 @@ data.connect:[generic|tickets]
       values
          user:x:@auth.ticket.get
          status:Open
+         priority:Normal
 
    // Retrieving user's name and email address.
    .email

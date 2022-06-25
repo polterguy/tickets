@@ -8,7 +8,7 @@
    offset:long
    order:string
    direction:string
-   tickets.id.eq:long
+   ticket:long
 .description:Returns items from your messages table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
 
@@ -18,7 +18,7 @@ auth.ticket.verify:root, admin, guest
 // Making sure user can only retrieve messages that belongs to his own tickets.
 auth.ticket.get
 
-validators.mandatory:x:@.arguments/*/tickets.id.eq
+validators.mandatory:x:@.arguments/*/ticket
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
@@ -29,12 +29,6 @@ data.connect:[generic|tickets]
       get-nodes:x:@.arguments/*/offset
       get-nodes:x:@.arguments/*/order
       get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/limit
-   remove-nodes:x:@.arguments/*/offset
-   remove-nodes:x:@.arguments/*/order
-   remove-nodes:x:@.arguments/*/direction
-   add:x:./*/data.read/*/where/*
-      get-nodes:x:@.arguments/*
 
    // Reading data from database.
    data.read
@@ -52,6 +46,7 @@ data.connect:[generic|tickets]
       where
          and
             tickets.user.eq:x:@auth.ticket.get
+            tickets.id.eq:x:@.arguments/*/ticket
       limit:-1
 
    // Returning result of above read invocation to caller.

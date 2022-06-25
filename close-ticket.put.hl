@@ -10,17 +10,29 @@
 
 // Verifying user is authorized to access endpoint.
 validators.mandatory:x:@.arguments/*/id
-auth.ticket.verify:guest
-.foreign-keys
-   .
-      column:department
-      table:departments
-      foreign_column:name
-      foreign_name:name
-      long:bool:true
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin, guest
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
+
+   /*
+    * Only root and admin accounts can close tickets that they don't own themselves.
+    * Hence, if user is not root or admin, we ensure that the [where] statement also
+    * includes the username.
+    */
+   auth.ticket.get
+   if
+      and
+         not
+            exists:x:@auth.ticket.get/*/role/=admin
+         not
+            exists:x:@auth.ticket.get/*/role/=root
+      .lambda
+         add:x:@data.connect/*/data.update/*/where/*/and
+            .
+               user.eq:x:@auth.ticket.get
 
    // Invoking our update slot.
    data.update

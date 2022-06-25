@@ -12,7 +12,7 @@
 .type:crud-count
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:guest
+auth.ticket.verify:root, admin, guest
 
 // Ensuring we're only counting items belonging to currently authenticated user.
 auth.ticket.get
