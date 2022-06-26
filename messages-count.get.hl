@@ -14,11 +14,26 @@ auth.ticket.verify:root, admin, guest
 // Making sure user supplied a ticket ID.
 validators.mandatory:x:@.arguments/*/ticket
 
-// Making sure user can only retrieve messages that belongs to his own tickets.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:[generic|tickets]
+
+   /*
+    * Only root and admin accounts can count messages that they don't own themselves.
+    * Hence, if user is not root or admin, we ensure that the [where] statement also
+    * includes the username.
+    */
+   if
+      and
+         not
+            exists:x:@auth.ticket.get/*/role/=admin
+         not
+            exists:x:@auth.ticket.get/*/role/=root
+      .lambda
+         auth.ticket.get
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               tickets.user.eq:x:@auth.ticket.get
 
    // Reading data from database.
    data.read
@@ -33,7 +48,6 @@ data.connect:[generic|tickets]
             as:count
       where
          and
-            tickets.user.eq:x:@auth.ticket.get
             tickets.id.eq:x:@.arguments/*/ticket
       limit:long:1
 

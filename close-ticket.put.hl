@@ -22,7 +22,6 @@ data.connect:[generic|tickets]
     * Hence, if user is not root or admin, we ensure that the [where] statement also
     * includes the username.
     */
-   auth.ticket.get
    if
       and
          not
@@ -30,6 +29,8 @@ data.connect:[generic|tickets]
          not
             exists:x:@auth.ticket.get/*/role/=root
       .lambda
+         auth.ticket.get
+         unwrap:x:+/*/*
          add:x:@data.connect/*/data.update/*/where/*/and
             .
                user.eq:x:@auth.ticket.get

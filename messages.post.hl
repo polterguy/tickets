@@ -15,11 +15,11 @@ auth.ticket.verify:root, admin, guest
 // Making sure user supplied a ticket ID.
 validators.mandatory:x:@.arguments/*/ticket
 
-// Making sure we associate ticket with user.
-auth.ticket.get
-
 // Opening up database connection.
 data.connect:[generic|tickets]
+
+   // Making sure we associate message with user.
+   auth.ticket.get
 
    // Checking if ticket exists.
    if
@@ -43,11 +43,12 @@ data.connect:[generic|tickets]
             .lambda
 
                // Oops, user tried to comment on a ticket not belonging to him or her.
-               log.error:User tried to comment on ticket not belonging to him or her
+               log.error:User tried to comment on ticket not existing or not belonging to him or her
                   user:x:@auth.ticket.get
                throw:Not found
                   status:404
                   public:true
+
    else
 
       // Root or admin user, hence we need to verify ticket exists.

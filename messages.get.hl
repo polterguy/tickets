@@ -22,18 +22,17 @@ validators.mandatory:x:@.arguments/*/ticket
 data.connect:[generic|tickets]
 
    /*
-    * Checking if user is root or admin, and if not, making sure he can only
-    * retrieve messages belonging to his own tickets.
+    * Only root and admin accounts can read messages that they don't own themselves.
+    * Hence, if user is not root or admin, we ensure that the [where] statement also
+    * includes the username.
     */
    if
       and
          not
-            auth.ticket.in-role:root
+            exists:x:@auth.ticket.get/*/role/=admin
          not
-            auth.ticket.in-role:admin
+            exists:x:@auth.ticket.get/*/role/=root
       .lambda
-      
-         // Ensuring user can only retrieve messages belonging to his own ticket(s).
          auth.ticket.get
          unwrap:x:+/*/*
          add:x:@data.connect/*/data.read/*/where/*/and
@@ -55,7 +54,7 @@ data.connect:[generic|tickets]
          messages.description
       where
          and
-            ticket:x:@.arguments/*/ticket
+            tickets.id.eq:x:@.arguments/*/ticket
       limit:-1
 
    // Returning result of above read invocation to caller.
