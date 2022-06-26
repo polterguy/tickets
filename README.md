@@ -24,7 +24,10 @@ in the system. Creating a ticket requires the user to be authenticated as _"gues
 
 The system also features an _"admin only"_ part, which are HTTP endpoints that can only
 be invoked by root or admin users, which are intended for administrators to handle and answer
-support requests. You can find these endpoints in the _"admin"_ folder.
+support requests. You can find these endpoints in the _"admin"_ folder. However, admin users
+can in general invoke all endpoints for non-admin users, with the difference that an admin
+user is allowed to count, view and edit tickets and messages not belonging to himself. While
+a non-admin user can only see and edit tickets that belongs to himself.
 
 ## Database support
 
