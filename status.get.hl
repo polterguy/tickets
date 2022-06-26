@@ -13,20 +13,6 @@ auth.ticket.verify:root, admin, guest
 // Opening up our database connection.
 data.connect:[generic|tickets]
 
-   // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
-   remove-nodes:x:@.arguments/*/operator
-   remove-nodes:x:@.arguments/*/limit
-   remove-nodes:x:@.arguments/*/offset
-   remove-nodes:x:@.arguments/*/order
-   remove-nodes:x:@.arguments/*/direction
-   add:x:./*/data.read/*/where/*
-      get-nodes:x:@.arguments/*
-
    // Reading data from database.
    data.read
       table:status

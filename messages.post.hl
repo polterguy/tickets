@@ -12,19 +12,22 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
+// Making sure user supplied a ticket ID.
+validators.mandatory:x:@.arguments/*/ticket
+
 // Making sure we associate ticket with user.
 auth.ticket.get
 
 // Opening up database connection.
 data.connect:[generic|tickets]
 
-   // Verifying ticket belongs to user.
+   // Checking if ticket exists.
    if
       and
          not
-            exists:x:@auth.ticket.get/*/roles/=root
+            auth.ticket.in-role:root
          not
-            exists:x:@auth.ticket.get/*/roles/=admin
+            auth.ticket.in-role:admin
       .lambda
 
          // Not a root user, hence we need to verify ticket belongs to user.
@@ -45,52 +48,72 @@ data.connect:[generic|tickets]
                throw:Not found
                   status:404
                   public:true
-
    else
 
-      // User is root or admin, hence we send the OP an email about new activity related to his ticket.
-      .email
-      .name
+      // Root or admin user, hence we need to verify ticket exists.
       data.read
          table:tickets
-         values
-            user
          where
             and
                id.eq:x:@.arguments/*/ticket
-      data.connect:magic
-         data.read
-            table:users_extra
-            values
-               type
-               name
-            where
-               and
-                  user.eq:x:@data.read/@data.read/*/*/user
-                  or
-                     type.eq:email
-                     type.eq:name
-         set-value:x:@.email
-            get-value:x:@data.read/*/*/type/=email/./*/value
-         set-value:x:@.name
-            get-value:x:@data.read/*/*/type/=name/./*/value
-
-      // Sending user his email receipt of the ticket.
       if
          not
-            eq
-               config.get:"magic:smtp:host"
-               .
+            exists:x:@data.read/*/*
          .lambda
-            unwrap:x:+/**
-            signal:magic.emails.send
-               subject:x:@.arguments/*/title
-               template-file:/modules/tickets/magic.startup/templates/message-receipt.html
-               mime-type:text/html
-               substitutes
-                  content:x:@.arguments/*/description
-               email:x:@.email
-               name:x:@.name
+
+            // Oops, user tried to comment on a ticket not belonging to him or her.
+            log.error:Root or admin user tried to comment on ticket not existing
+               user:x:@auth.ticket.get
+            throw:Not found
+               status:404
+               public:true
+
+   /*
+    * Finding OP user's name and email address such that we can send him an email
+    * receipt of ticket activity.
+    */
+   .email
+   .name
+   data.read
+      table:tickets
+      values
+         user
+      where
+         and
+            id.eq:x:@.arguments/*/ticket
+   data.connect:magic
+      data.read
+         table:users_extra
+         values
+            type
+            name
+         where
+            and
+               user.eq:x:@data.read/@data.read/*/*/user
+               or
+                  type.eq:email
+                  type.eq:name
+      set-value:x:@.email
+         get-value:x:@data.read/*/*/type/=email/./*/value
+      set-value:x:@.name
+         get-value:x:@data.read/*/*/type/=name/./*/value
+
+   // Sending user his email receipt of the ticket.
+   if
+      not
+         eq
+            config.get:"magic:smtp:host"
+            .
+      .lambda
+         unwrap:x:+/**
+         signal:magic.emails.send
+            subject:Somebody commented on your ticket at Aista
+            template-file:/modules/tickets/magic.startup/templates/message-receipt.html
+            mime-type:text/html
+            substitutes
+               content:x:@.arguments/*/description
+            email:x:@.email
+            name:x:@.name
 
    // Parametrising our create invocation.
    add:x:./*/data.create/*/values

@@ -15,20 +15,30 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
-// Making sure user can only retrieve messages that belongs to his own tickets.
-auth.ticket.get
-
+// Making sure user supplied a ticket ID.
 validators.mandatory:x:@.arguments/*/ticket
 
 // Opening up our database connection.
 data.connect:[generic|tickets]
 
-   // Parametrising our read invocation.
-   add:x:./*/data.read
-      get-nodes:x:@.arguments/*/limit
-      get-nodes:x:@.arguments/*/offset
-      get-nodes:x:@.arguments/*/order
-      get-nodes:x:@.arguments/*/direction
+   /*
+    * Checking if user is root or admin, and if not, making sure he can only
+    * retrieve messages belonging to his own tickets.
+    */
+   if
+      and
+         not
+            auth.ticket.in-role:root
+         not
+            auth.ticket.in-role:admin
+      .lambda
+      
+         // Ensuring user can only retrieve messages belonging to his own ticket(s).
+         auth.ticket.get
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               tickets.user.eq:x:@auth.ticket.get
 
    // Reading data from database.
    data.read
@@ -45,8 +55,7 @@ data.connect:[generic|tickets]
          messages.description
       where
          and
-            tickets.user.eq:x:@auth.ticket.get
-            tickets.id.eq:x:@.arguments/*/ticket
+            ticket:x:@.arguments/*/ticket
       limit:-1
 
    // Returning result of above read invocation to caller.

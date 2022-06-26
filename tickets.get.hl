@@ -19,11 +19,27 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
-// Needed to make sure we only return tickets for the currently authenticated user.
-auth.ticket.get
-
 // Opening up our database connection.
 data.connect:[generic|tickets]
+
+   /*
+    * Checking if user is root or admin, and if not, making sure he can only
+    * retrieve tickets belonging to himself.
+    */
+   if
+      and
+         not
+            auth.ticket.in-role:root
+         not
+            auth.ticket.in-role:admin
+      .lambda
+      
+         // Ensuring user can only retrieve messages belonging to his own ticket(s).
+         auth.ticket.get
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               tickets.user.eq:x:@auth.ticket.get
 
    // Parametrising our read invocation.
    add:x:./*/data.read
@@ -51,7 +67,6 @@ data.connect:[generic|tickets]
          tickets.priority
       where
          and
-            user.eq:x:@auth.ticket.get
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
