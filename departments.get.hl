@@ -10,15 +10,12 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
-// Applying some HTTP cache.
-response.headers.set
-   Cache-Control:public, max-age=600
-
 // Opening up our database connection.
 data.connect:[generic|tickets]
 
    // Reading data from database.
    data.read
+      database-type:sqlite
       table:departments
       columns
          departments.name
