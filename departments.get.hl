@@ -15,7 +15,6 @@ data.connect:[generic|tickets]
 
    // Reading data from database.
    data.read
-      database-type:sqlite
       table:departments
       columns
          departments.name
