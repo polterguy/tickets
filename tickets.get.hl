@@ -65,6 +65,7 @@ data.connect:[generic|tickets]
          tickets.title
          tickets.description
          tickets.priority
+         tickets.created
       where
          and
 
