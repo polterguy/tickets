@@ -101,10 +101,15 @@ data.connect:[generic|tickets]
 
    // Sending user his email receipt of the ticket.
    if
-      not
-         eq
-            config.get:"magic:smtp:host"
-            .
+      and
+         not
+            eq
+               config.get:"magic:smtp:host"
+               .
+         not
+            eq
+               config.get:"magic:smtp:host"
+               .:
       .lambda
          unwrap:x:+/**
          signal:magic.emails.send

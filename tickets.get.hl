@@ -54,20 +54,56 @@ data.connect:[generic|tickets]
    add:x:./*/data.read/*/where/*
       get-nodes:x:@.arguments/*
 
-   // Reading data from database.
-   data.read
-      table:tickets
-      columns
-         tickets.id
-         tickets.user
-         tickets.status
-         tickets.department
-         tickets.title
-         tickets.description
-         tickets.priority
-         tickets.created
-      where
-         and
+   // Checking if we're using MySQL, at which point we've RIGHT joins.
+   if
+      eq
+         config.get:"magic:databases:default"
+         .:sqlite
+      .lambda
 
-   // Returning result of above read invocation to caller.
-   return-nodes:x:@data.read/*
+         // Reading data from database.
+         data.read
+            table:tickets
+            columns
+               tickets.id
+               tickets.user
+               tickets.status
+               tickets.department
+               tickets.title
+               tickets.description
+               tickets.priority
+               tickets.created
+            where
+               and
+
+         // Returning result of above read invocation to caller.
+         return-nodes:x:@data.read/*
+
+   else
+
+      // Reading data from database.
+      data.read
+         table:tickets
+            join:messages
+               type:left
+               on
+                  and
+                     tickets.id.eq:messages.ticket
+         columns
+            tickets.id
+            tickets.user
+            tickets.status
+            tickets.department
+            tickets.title
+            tickets.description
+            tickets.priority
+            tickets.created
+            max(messages.created)
+               as:last_activity
+         where
+            and
+         group
+            tickets.id
+
+      // Returning result of above read invocation to caller.
+      return-nodes:x:@data.read/*
