@@ -1,0 +1,63 @@
+
+/*
+ * Upload file endpoint template file.
+ * 
+ * This file creates an HTTP PUT endpoint that allows you to upload a single file file as multipart/form-data
+ * and stores it in a specified folder on the server.
+ * 
+ * NOTICE! This file should probably be consumed as a Macro, and not as a template, since this
+ * will correctly decorate your file with the correct properties.
+ */
+.description:Upload file endpoint, allowing you to upload a file to the backend, Notice, [old_file] if declared and existing will be deleted.
+.arguments
+   file:*
+.type:file-upload
+.accept:multipart/form-data
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+
+// Verifying user has access to invoke endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Folder where file should be saved.
+.folder:/etc/tickets/
+
+// Figuring out file extension and sanity checking it.
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+switch:x:@strings.split/0/-
+   case:jpeg
+   case:jpg
+   case:png
+   case:gif
+      // Do nothing, accept file.
+   default:
+      throw:Only image files please
+         public:true
+         status:401
+
+// Creating a unique filename for file.
+.filename
+set-value:x:@.filename
+   strings.concat
+      guid.new
+      .:.
+      get-value:x:@strings.split/0/-
+
+// Saving file with the specified filename to our folder.
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.filename
+io.stream.save-file:x:@.full-path
+   get-value:x:@.arguments/*/file/*/stream
+
+// Returning success to caller.
+unwrap:x:+/*/filename
+return
+   result:success
+   filename:x:@.filename

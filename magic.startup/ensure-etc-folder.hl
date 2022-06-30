@@ -1,0 +1,10 @@
+
+/*
+ * Creates an "etc" folder for the system to store file uploads inside of.
+ */
+.folder:/etc/tickets/
+if
+   not
+      io.folder.exists:x:@.folder
+   .lambda
+      io.folder.create:x:@.folder
