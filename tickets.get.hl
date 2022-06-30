@@ -78,6 +78,8 @@ data.connect:[generic|tickets]
          and
       group
          tickets.id
+      order:tickets.created
+      direction:desc
 
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*
