@@ -1,0 +1,76 @@
+
+/*
+ * Returns the specified ticket image to caller.
+ */
+.description:Returns the specified ticket image to caller
+.type:image-download
+.arguments
+   image:string
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/image
+
+// Verifying user has access to invoke endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Sanity checking invocation.
+if
+   not
+      strings.starts-with:x:@.arguments/*/image
+         .:/etc/tickets/tickets/
+   .lambda
+      throw:Access denied
+         public:true
+         status:401
+
+if
+   not
+      io.file.exists:x:@.arguments/*/image
+   .lambda
+      throw:Not found
+         public:true
+         status:404
+
+// Ensuring user doesn't retrieve files not belonging to his own tickets unless root or admin.
+auth.ticket.get
+if
+   and
+      not
+         auth.ticket.in-role:root
+   and
+      not
+         auth.ticket.in-role:admin
+   .lambda
+      strings.substring:x:@.arguments/*/image
+         strings.length:/etc/tickets/tickets/id-
+      strings.split:x:-
+         .:/
+      convert:x:-
+         type:long
+      data.connect:tickets
+         data.read
+            table:tickets
+            values
+               id
+            where
+               and
+                  user.eq:x:@auth.ticket.get
+                  id.eq:x:@convert
+         if
+            not
+               exists:x:@data.read/*/*
+            .lambda
+               throw:No such image
+                  status:404
+                  public:true
+
+// Opening up a read stream for file.
+io.stream.open-file:x:@.arguments/*/image
+
+// Making sure we get the HTTP headers correctly applied.
+response.headers.set
+   Content-Type:application/octet-stream
+   Cache-Control:public, max-age=6000
+
+// Returning image to caller.
+return:x:@io.stream.open-file

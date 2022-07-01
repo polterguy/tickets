@@ -1,0 +1,87 @@
+
+/*
+ * Upload image file endpoint to associate an image with a ticket.
+ */
+.description:Upload image file endpoint to associate an image with a ticket.
+.arguments
+   file:*
+   ticket:long
+.type:file-upload
+.accept:multipart/form-data
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/file
+validators.mandatory:x:@.arguments/*/file/*/name
+validators.mandatory:x:@.arguments/*/file/*/stream
+validators.mandatory:x:@.arguments/*/ticket
+
+// Verifying user has access to invoke endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Ensuring user doesn't save files not belonging to his own tickets.
+auth.ticket.get
+data.connect:tickets
+   data.read
+      table:tickets
+      values
+         id
+      where
+         and
+            user.eq:x:@auth.ticket.get
+            id.eq:x:@.arguments/*/ticket
+   if
+      not
+         exists:x:@data.read/*/*
+      .lambda
+         throw:No such ticket
+            status:404
+            public:true
+
+// Figuring out file extension and sanity checking it.
+strings.split:x:@.arguments/*/file/*/name
+   .:.
+strings.to-lower:x:@strings.split/0/-
+switch:x:-
+   case:jpeg
+   case:jpg
+   case:png
+   case:gif
+
+      // Do nothing, accept file as is.
+      .foo
+
+   default:
+
+      // Not correct file ending.
+      throw:Only image files please
+         public:true
+         status:401
+
+// Folder where file should be saved.
+.folder:/etc/tickets/tickets/
+set-value:x:@.folder
+   strings.concat
+      get-value:x:@.folder
+      .:id-
+      get-value:x:@.arguments/*/ticket
+      .:/
+
+// Ensuring folder exists.
+if
+   not
+      io.folder.exists:x:@.folder
+   .lambda
+      io.folder.create:x:@.folder
+
+// Saving file with the specified filename to our folder.
+.full-path
+set-value:x:@.full-path
+   strings.concat
+      get-value:x:@.folder
+      get-value:x:@.arguments/*/file/*/name
+io.stream.save-file:x:@.full-path
+   get-value:x:@.arguments/*/file/*/stream
+
+// Returning success to caller.
+return
+   result:success
