@@ -1,19 +1,18 @@
 
 /*
- * Upload image file endpoint to associate an image with a ticket.
+ * Upload image file endpoint to associate an image with a message.
  */
-.description:Upload image file endpoint to associate an image with a ticket.
+.description:Upload image file endpoint to associate an image with a message.
 .arguments
    file:*
-   ticket:long
+   message:long
 .type:file-upload
 .accept:multipart/form-data
 
 // Sanity checking invocation.
-validators.mandatory:x:@.arguments/*/file
 validators.mandatory:x:@.arguments/*/file/*/name
 validators.mandatory:x:@.arguments/*/file/*/stream
-validators.mandatory:x:@.arguments/*/ticket
+validators.mandatory:x:@.arguments/*/message
 
 // Verifying user has access to invoke endpoint.
 auth.ticket.verify:root, admin, guest
@@ -22,18 +21,23 @@ auth.ticket.verify:root, admin, guest
 auth.ticket.get
 data.connect:tickets
    data.read
-      table:tickets
+      table:messages
+         join:tickets
+            type:left
+            on
+               and
+                  messages.ticket.eq:tickets.id
       values
-         id
+         tickets.id
       where
          and
-            user.eq:x:@auth.ticket.get
-            id.eq:x:@.arguments/*/ticket
+            tickets.user.eq:x:@auth.ticket.get
+            messages.id.eq:x:@.arguments/*/message
    if
       not
          exists:x:@data.read/*/*
       .lambda
-         throw:No such ticket
+         throw:No such message
             status:404
             public:true
 
@@ -50,7 +54,7 @@ switch:x:-
       // Do nothing, accept file as is.
       .foo
 
-   default:
+   default
 
       // Not correct file ending.
       throw:Only image files please
@@ -58,12 +62,12 @@ switch:x:-
          status:401
 
 // Folder where file should be saved.
-.folder:/etc/tickets/tickets/
+.folder:/etc/tickets/messages/
 set-value:x:@.folder
    strings.concat
       get-value:x:@.folder
       .:id-
-      get-value:x:@.arguments/*/ticket
+      get-value:x:@.arguments/*/message
       .:/
 
 // Ensuring folder exists.
