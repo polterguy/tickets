@@ -1,0 +1,61 @@
+
+/*
+ * Template for HTTP PUT CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   id:long
+.description:Opens an already existing ticket that was closed associated with the currently authenticated user
+.type:crud-update
+
+// Verifying user is authorized to access endpoint.
+validators.mandatory:x:@.arguments/*/id
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Opening up our database connection.
+data.connect:[generic|tickets]
+
+   /*
+    * Only root and admin accounts can close tickets that they don't own themselves.
+    * Hence, if user is not root or admin, we ensure that the [where] statement also
+    * includes the username.
+    */
+   if
+      and
+         not
+            exists:x:@auth.ticket.get/*/role/=admin
+         not
+            exists:x:@auth.ticket.get/*/role/=root
+      .lambda
+         auth.ticket.get
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.update/*/where/*/and
+            .
+               user.eq:x:@auth.ticket.get
+
+   // Invoking our update slot.
+   data.update
+      table:tickets
+      values
+         status:Open
+      where
+         and
+            id.eq:x:@.arguments/*/id
+
+   // Verifying record exists.
+   if
+      eq
+         get-value:x:@data.update
+         .:int:0
+      .lambda
+         response.status.set:404
+         return
+            result:Record not found
+
+   // Returning success to caller.
+   response.status.set:202
+   unwrap:x:+/*
+   return
+      affected:x:@data.update
