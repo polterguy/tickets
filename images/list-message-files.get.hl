@@ -1,0 +1,57 @@
+
+/*
+ * Lists all image files associate with message.
+ */
+.description:Lists all image files associate with ticket
+.type:custom
+.arguments
+   message:long
+
+// Sanity checking invocation.
+validators.mandatory:x:@.arguments/*/message
+
+// Verifying user has access to invoke endpoint.
+auth.ticket.verify:root, admin, guest
+
+// Ensuring user doesn't try to list files not associated with his or her tickets.
+auth.ticket.get
+if
+   and
+      not
+         auth.ticket.in-role:root
+      not
+         auth.ticket.in-role:admin
+   .lambda
+      data.connect:tickets
+         data.read
+            table:messages
+               join:tickets
+                  type:left
+                  on
+                     and
+                        messages.ticket.eq:tickets.id
+            values
+               messages.id
+            where
+               and
+                  tickets.user.eq:x:@auth.ticket.get
+                  messages.id.eq:x:@.arguments/*/ticket
+         if
+            not
+               exists:x:@data.read/*/*
+            .lambda
+               throw:No such message
+                  status:404
+                  public:true
+
+// Lists all files existing existing in image folder associated with ticket and returns to caller.
+strings.concat
+   .:/etc/tickets/messages/id-
+   convert:x:@.arguments/*/message
+      type:string
+   .:/
+if
+   io.folder.exists:x:@strings.concat
+   .lambda
+      io.file.list:x:@strings.concat
+      return-nodes:x:-/*

@@ -26,15 +26,20 @@ A guest user creating tickets and messages can associate images with both his or
 messages. This might be additional helper information images, such as screenshots etc, that
 describes the issue the user has. Such files will be saved in the _"/etc/tickets/xxx/yyy/"_ folders,
 where xxx is either _"tickets"_ or _"messages"_ depending upon if the image is to be associated
-with a message or a ticket, and its yyy parts is the id of the ticket or message, prefixed with
-_"id-"_. The filenames are kept as is, but only png, jpeg, jpg and gif images are allowed in
-the endpoint. There are two endpoints for uploading images and two endpoints for downloading
-images, and they are as follows.
+with a ticket or a message, and its yyy parts is the id of the ticket or message, prefixed with
+_"id-"_. The filenames are kept as is, but only png, jpeg, jpg and gif image extensions are
+allowed in the endpoint. There are two endpoints for uploading images and two endpoints for
+downloading images, and they are as follows.
 
 * `POST` - _"images/upload-ticket-file"_ - Uploads a file and associates it with a ticket
 * `POST` - _"images/upload-message-file"_ - Uploads a file and associates it with a message
 * `GET` - _"images/download-ticket-image"_ - Downloads an image file associated with a ticket
 * `GET` - _"images/download-message-image"_ - Downloads an image file associated with a message
+
+To list files associated with tickets or messages you can use the following endpoint.
+
+* `GET` - _"images/list-ticket-files"_ - Returns a list of all files associated with the ticket
+* `GET` - _"images/list-message-files"_ - Returns a list of all files associated with the message
 
 ## Administration interface
 
