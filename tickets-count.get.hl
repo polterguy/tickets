@@ -7,6 +7,7 @@
    tickets.status.eq:string
    tickets.department.eq:string
    tickets.title.like:string
+   tickets.service.like:string
    tickets.description.like:string
 .description:Counts items from your tickets table in your [generic|tickets] database according to the specified arguments
 .type:crud-count

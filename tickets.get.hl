@@ -12,6 +12,7 @@
    tickets.status.eq:string
    tickets.department.eq:string
    tickets.title.like:string
+   tickets.service.like:string
    tickets.description.like:string
 .description:Returns items from your tickets table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
@@ -72,6 +73,7 @@ data.connect:[generic|tickets]
          tickets.description
          tickets.priority
          tickets.created
+         tickets.service
          max(messages.created)
             as:last_activity
       where
