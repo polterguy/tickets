@@ -136,7 +136,7 @@ data.connect:[generic|tickets]
          user:x:@auth.ticket.get
 
    // Checking if we've got a notifications callback, and if so, invoking it.
-   config.get:"tickets:notifications"
+   config.get:"magic:tickets:notifications"
    if
       and
          or
