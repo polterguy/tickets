@@ -138,24 +138,15 @@ data.connect:[generic|tickets]
    // Checking if we've got a notifications callback, and if so, invoking it.
    config.get:"magic:tickets:notifications"
    if
-      and
-         or
-            auth.ticket.in-role:root
-            auth.ticket.in-role:admin
-         neq:x:@config.get
-            .
-         neq:x:@config.get
-            .:
+      or
+         auth.ticket.in-role:root
+         auth.ticket.in-role:admin
       .lambda
-         .exe
-            signal:foo
-               type:tickets
-               content:An administrator replied to yur ticket
-               username:x:@.username
-         unwrap:x:@.exe/*/*/username
-         set-value:x:@.exe/*/signal/=foo
-            get-value:x:@config.get
-         eval:x:@.exe
+         unwrap:x:+/*/username
+         signal:x:@config.get
+            type:tickets
+            content:An administrator replied to your ticket
+            username:x:@.username
 
    // Returning result of above invoction to caller.
    response.status.set:201
