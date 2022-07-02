@@ -75,6 +75,7 @@ data.connect:[generic|tickets]
     */
    .email
    .name
+   .username
    data.read
       table:tickets
       values
@@ -82,6 +83,8 @@ data.connect:[generic|tickets]
       where
          and
             id.eq:x:@.arguments/*/ticket
+   set-value:x:@.username
+      get-value:x:@data.read/*/*/user
    data.connect:magic
       data.read
          table:users_extra
@@ -90,7 +93,7 @@ data.connect:[generic|tickets]
             name
          where
             and
-               user.eq:x:@data.read/@data.read/*/*/user
+               user.eq:x:@.username
                or
                   type.eq:email
                   type.eq:name
@@ -131,6 +134,28 @@ data.connect:[generic|tickets]
       return-id:bool:true
       values
          user:x:@auth.ticket.get
+
+   // Checking if we've got a notifications callback, and if so, invoking it.
+   config.get:"tickets:notifications"
+   if
+      and
+         or
+            auth.ticket.in-role:root
+            auth.ticket.in-role:admin
+         neq:x:@config.get
+            .
+         neq:x:@config.get
+            .:
+      .lambda
+         .exe
+            signal:foo
+               type:tickets
+               content:An administrator replied to yur ticket
+               username:x:@.username
+         unwrap:x:@.exe/*/*/username
+         set-value:x:@.exe/*/signal/=foo
+            get-value:x:@config.get
+         eval:x:@.exe
 
    // Returning result of above invoction to caller.
    response.status.set:201
