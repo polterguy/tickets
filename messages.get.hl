@@ -57,5 +57,27 @@ data.connect:[generic|tickets]
             tickets.id.eq:x:@.arguments/*/ticket
       limit:-1
 
+   // Storing our result in a temporary result node.
+   .result
+   add:x:-
+      get-nodes:x:@data.read/*
+
+   // Iterating through each result from above and finding out if files exists for item.
+   for-each:x:@.result/*
+      strings.concat
+         .:/etc/tickets/messages/id-
+         get-value:x:@.dp/#/*/id
+         .:/
+      if
+         io.folder.exists:x:@strings.concat
+         .lambda
+            add:x:@.dp/#
+               .
+                  has_files:bool:true
+      else
+         add:x:@.dp/#
+            .
+               has_files:bool:false
+
    // Returning result of above read invocation to caller.
-   return-nodes:x:@data.read/*
+   return-nodes:x:@.result/*
