@@ -44,7 +44,7 @@ if
          strings.length:/etc/tickets/tickets/id-
       strings.split:x:-
          .:/
-      convert:x:-
+      convert:x:-/0
          type:long
       data.connect:tickets
          data.read
