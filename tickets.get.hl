@@ -20,6 +20,16 @@
 // Verifying user is authorized to access endpoint.
 auth.ticket.verify:root, admin, guest
 
+// Defaulting sorting to created/descending
+if
+   not
+      exists:x:@.arguments/*/order
+   .lambda
+      add:x:../*/data.connect/*/data.read
+         .
+            order:tickets.created
+            direction:desc
+
 // Opening up our database connection.
 data.connect:[generic|tickets]
 
@@ -80,8 +90,6 @@ data.connect:[generic|tickets]
          and
       group
          tickets.id
-      order:tickets.created
-      direction:desc
 
    // Storing our result in a temporary result node.
    .result
