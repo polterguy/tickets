@@ -35,7 +35,7 @@ if
             where
                and
                   tickets.user.eq:x:@auth.ticket.get
-                  messages.id.eq:x:@.arguments/*/ticket
+                  messages.id.eq:x:@.arguments/*/message
          if
             not
                exists:x:@data.read/*/*
