@@ -44,7 +44,7 @@ if
          strings.length:/etc/tickets/messages/id-
       strings.split:x:-
          .:/
-      convert:x:-
+      convert:x:-/0
          type:long
       data.connect:tickets
          data.read
@@ -55,11 +55,11 @@ if
                      and
                         messages.ticket.eq:tickets.id
             values
-               id
+               messages.id
             where
                and
                   tickets.user.eq:x:@auth.ticket.get
-                  id.eq:x:@convert
+                  messages.id.eq:x:@convert
          if
             not
                exists:x:@data.read/*/*
