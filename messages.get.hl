@@ -18,6 +18,9 @@ auth.ticket.verify:root, admin, guest
 // Making sure user supplied a ticket ID.
 validators.mandatory:x:@.arguments/*/ticket
 
+// Getting username to parametrise invocation.
+auth.ticket.get
+
 // Opening up our database connection.
 data.connect:[generic|tickets]
 
@@ -29,11 +32,10 @@ data.connect:[generic|tickets]
    if
       and
          not
-            exists:x:@auth.ticket.get/*/role/=admin
+            exists:x:@auth.ticket.get/*/roles/*/=admin
          not
-            exists:x:@auth.ticket.get/*/role/=root
+            exists:x:@auth.ticket.get/*/roles/*/=root
       .lambda
-         auth.ticket.get
          unwrap:x:+/*/*
          add:x:@data.connect/*/data.read/*/where/*/and
             .
