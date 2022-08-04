@@ -25,9 +25,9 @@ data.connect:[generic|tickets]
    if
       and
          not
-            exists:x:@auth.ticket.get/*/role/=admin
+            auth.ticket.in-role:root
          not
-            exists:x:@auth.ticket.get/*/role/=root
+            auth.ticket.in-role:admin
       .lambda
          auth.ticket.get
          unwrap:x:+/*/*
