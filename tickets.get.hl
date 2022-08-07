@@ -113,5 +113,9 @@ data.connect:[generic|tickets]
             .
                has_files:bool:false
 
+   // Caching for a handful of seconds.
+   response.headers.set
+      Cache-Control:private, max-age=5
+
    // Returning result of above read invocation to caller.
    return-nodes:x:@.result/*

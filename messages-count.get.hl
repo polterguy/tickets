@@ -51,5 +51,9 @@ data.connect:[generic|tickets]
             tickets.id.eq:x:@.arguments/*/ticket
       limit:long:1
 
+   // Caching for a handful of seconds.
+   response.headers.set
+      Cache-Control:private, max-age=5
+
    // Returning result of above read invocation to caller.
    return-nodes:x:@data.read/*/*
