@@ -74,6 +74,20 @@ data.connect:[generic|tickets]
                content:x:@.arguments/*/description
             email:x:@.email
             name:x:@.name
+         config.get:"magic:tickets:admins"
+            .:"th@aista.com,mo@aista.com,sm@aista.com,ms@aista.com"
+         strings.split:x:@config.get
+            .:,
+         for-each:x:@strings.split/*
+            unwrap:x:+/**
+            signal:magic.emails.send
+               subject:x:@.arguments/*/title
+               template-file:/modules/tickets/magic.startup/templates/ticket-receipt.html
+               mime-type:text/html
+               substitutes
+                  content:x:@.arguments/*/description
+               email:x:@.dp/#
+               name:Support Technician
    
    // Returning result of above invoction to caller.
    response.status.set:201
