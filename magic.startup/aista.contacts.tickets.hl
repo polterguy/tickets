@@ -13,7 +13,9 @@ slots.create:aista.contacts.tickets
          table:tickets
          columns
             title
+            description
             created
+            status
          where
             and
                user.eq:x:@.arguments/*/meta
