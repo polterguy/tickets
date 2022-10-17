@@ -1,0 +1,24 @@
+
+/*
+ * Plugin slot returning tickets associated with user.
+ */
+slots.create:aista.contacts.tickets
+
+   // Sanity checking invocation.
+   validators.mandatory:x:@.arguments/*/meta
+
+   // Returning cloudlets associated with user.
+   data.connect:[generic|tickets]
+      data.read
+         table:tickets
+         columns
+            title
+            created
+         where
+            and
+               user.eq:x:@.arguments/*/meta
+      add:x:./*/return/*/items
+         get-nodes:x:@data.read/*
+      return
+         title:Tickets
+         items
