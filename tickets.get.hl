@@ -14,6 +14,7 @@
    tickets.title.like:string
    tickets.service.like:string
    tickets.description.like:string
+   tickets.user.eq:string
 .description:Returns items from your tickets table in your [generic|tickets] database according to the specified arguments
 .type:crud-read
 
@@ -51,6 +52,7 @@ data.connect:[generic|tickets]
          add:x:@data.connect/*/data.read/*/where/*/and
             .
                tickets.user.eq:x:@auth.ticket.get
+         remove-nodes:x:@.arguments/*/tickets.user.eq
 
    // Parametrising our read invocation.
    add:x:./*/data.read
