@@ -4,25 +4,33 @@
  */
 slots.create:aista.contacts.tickets
 
-   // Sanity checking invocation.
-   validators.mandatory:x:@.arguments/*/meta
+   // Making sure we've got a [meta] argument.
+   if
+      and
+         exists:x:@.arguments/*/meta
+         not-null:x:@.arguments/*/meta
+         neq:x:@.arguments/*/meta
+            .:
+      .lambda
 
-   // Returning cloudlets associated with user.
-   data.connect:[generic|tickets]
-      data.read
-         table:tickets
-         columns
-            title
-            description
-            created
-            status
-         where
-            and
-               user.eq:x:@.arguments/*/meta
-         order:created
-         direction:desc
-      add:x:./*/return/*/items
-         get-nodes:x:@data.read/*
-      return
-         title:Tickets
-         items
+         // Returning cloudlets associated with user.
+         data.connect:[generic|tickets]
+            data.read
+               table:tickets
+               columns
+                  title
+                  description
+                  created
+                  status
+               where
+                  and
+                     user.eq:x:@.arguments/*/meta
+               order:created
+               direction:desc
+            add:x:./*/return/*/items
+               get-nodes:x:@data.read/*
+            return
+               title:Tickets
+               items
+   return
+      title:Tickets
