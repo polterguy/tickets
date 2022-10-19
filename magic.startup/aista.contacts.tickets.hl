@@ -58,6 +58,21 @@ slots.create:aista.contacts.tickets
                      disabled:x:@.disabled
                      payload
                         id:x:@.dp/#/*/id
+                  .
+                     icon:reply
+                     tooltip:Answer ticket
+                     url:magic/modules/tickets/messages
+                     verb:post
+                     fields
+                        .
+                           key:description
+                           type:textarea
+                           props
+                              placeholder:Description
+                              required:bool:true
+                              rows:int:5
+                     payload
+                        ticket:x:@.dp/#/*/id
 
          // Removing [id] to makes sure we don't return it to caller.
          remove-nodes:x:@.dp/#/*/id
