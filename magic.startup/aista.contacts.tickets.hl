@@ -6,31 +6,35 @@ slots.create:aista.contacts.tickets
 
    // Making sure we've got a [meta] argument.
    if
-      and
-         exists:x:@.arguments/*/meta
-         not-null:x:@.arguments/*/meta
-         neq:x:@.arguments/*/meta
+      or
+         not-exists:x:@.arguments/*/meta
+         null:x:@.arguments/*/meta
+         eq:x:@.arguments/*/meta
             .:
       .lambda
+      
+         // No [meta] argument provided
+         return
+            title:Tickets
 
-         // Returning cloudlets associated with user.
-         data.connect:[generic|tickets]
-            data.read
-               table:tickets
-               columns
-                  title
-                  description
-                  created
-                  status
-               where
-                  and
-                     user.eq:x:@.arguments/*/meta
-               order:created
-               direction:desc
-            add:x:./*/return/*/items
-               get-nodes:x:@data.read/*
-            return
-               title:Tickets
-               items
-   return
-      title:Tickets
+   // Returning tickets associated with user.
+   data.connect:[generic|tickets]
+      data.read
+         table:tickets
+         columns
+            title
+            description
+            created
+            status
+         where
+            and
+               user.eq:x:@.arguments/*/meta
+         order:created
+         direction:desc
+
+      // Returning tickets to caller.
+      add:x:./*/return/*/items
+         get-nodes:x:@data.read/*
+      return
+         title:Tickets
+         items
