@@ -22,6 +22,7 @@ slots.create:aista.contacts.tickets
       data.read
          table:tickets
          columns
+            id
             title
             description
             created
@@ -31,6 +32,35 @@ slots.create:aista.contacts.tickets
                user.eq:x:@.arguments/*/meta
          order:created
          direction:desc
+
+      // Iterating through each cloudlet returned above adding actions to each cloudlet.
+      for-each:x:@data.read/*
+         include:x:@.dp/#
+
+            // Disabling close action if ticket is already closed.
+            .disabled:bool:false
+            if
+               eq:x:@.dp/#/*/status
+                  .:Closed
+               .lambda
+                  set-value:x:@.disabled
+                     .:bool:true
+
+            // Returning actions from [include].
+            unwrap:x:+/**
+            return
+               actions
+                  .
+                     icon:check_circle
+                     tooltip:Close the ticket
+                     url:magic/modules/tickets/close-ticket
+                     verb:put
+                     disabled:x:@.disabled
+                     payload
+                        id:x:@.dp/#/*/id
+
+         // Removing [id] to makes sure we don't return it to caller.
+         remove-nodes:x:@.dp/#/*/id
 
       // Returning tickets to caller.
       add:x:./*/return/*/items
