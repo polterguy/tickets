@@ -13,7 +13,7 @@
 .type:crud-read
 
 // Verifying user is authorized to access endpoint.
-auth.ticket.verify:root, admin, guest
+auth.ticket.verify:root, admin, guest, account_manager
 
 // Making sure user supplied a ticket ID.
 validators.mandatory:x:@.arguments/*/ticket
@@ -35,6 +35,8 @@ data.connect:[generic|tickets]
             auth.ticket.in-role:root
          not
             auth.ticket.in-role:admin
+         not
+            auth.ticket.in-role:account_manager
       .lambda
          unwrap:x:+/*/*
          add:x:@data.connect/*/data.read/*/where/*/and
