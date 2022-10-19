@@ -1,0 +1,89 @@
+
+/*
+ * Template for HTTP GET CRUD requests.
+ * This file was automatically generated using Magic's CRUDifier.
+ */
+.arguments
+   limit:long
+   offset:long
+   order:string
+   direction:string
+   ticket:long
+.description:Returns items from your messages table in your [generic|tickets] database according to the specified arguments
+.type:crud-read
+
+// Verifying user is authorized to access endpoint.
+auth.ticket.verify:root, admin, guest, account_manager
+
+// Making sure user supplied a ticket ID.
+validators.mandatory:x:@.arguments/*/ticket
+
+// Getting username to parametrise invocation.
+auth.ticket.get
+
+// Opening up our database connection.
+data.connect:[generic|tickets]
+
+   /*
+    * Only root and admin accounts can read messages that they don't own themselves.
+    * Hence, if user is not root or admin, we ensure that the [where] statement also
+    * includes the username.
+    */
+   if
+      and
+         not
+            auth.ticket.in-role:root
+         not
+            auth.ticket.in-role:admin
+         not
+            auth.ticket.in-role:account_manager
+      .lambda
+         unwrap:x:+/*/*
+         add:x:@data.connect/*/data.read/*/where/*/and
+            .
+               tickets.user.eq:x:@auth.ticket.get
+
+   // Reading data from database.
+   data.read
+      table:messages
+         join:tickets
+            type:inner
+            on
+               and
+                  tickets.id:messages.ticket
+      columns
+         messages.created
+         messages.description
+      where
+         and
+            tickets.id.eq:x:@.arguments/*/ticket
+      limit:-1
+
+   // Storing our result in a temporary result node.
+   .result
+   add:x:-
+      get-nodes:x:@data.read/*
+
+   // Iterating through each result from above and finding out if files exists for item.
+   for-each:x:@.result/*
+      strings.concat
+         .:/etc/tickets/messages/id-
+         get-value:x:@.dp/#/*/id
+         .:/
+      if
+         io.folder.exists:x:@strings.concat
+         .lambda
+            .add:x:@.dp/#
+               .
+                  has_files:bool:true
+      else
+         .add:x:@.dp/#
+            .
+               has_files:bool:false
+
+   // Caching for a handful of seconds.
+   response.headers.set
+      Cache-Control:private, max-age=5
+
+   // Returning result of above read invocation to caller.
+   return-nodes:x:@.result/*

@@ -46,9 +46,19 @@ slots.create:aista.contacts.tickets
                   set-value:x:@.disabled
                      .:bool:true
 
+            // Dynamically building our get messages URL.
+            .get-messages
+            set-value:x:@.get-messages
+               strings.concat
+                  .:magic/modules/tickets/admin/messages?order=created&direction=desc&limit=-1&ticket=
+                  get-value:x:@.dp/#/*/id
+
             // Returning actions from [include].
             unwrap:x:+/**
             return
+               click
+                  title:Messages
+                  url:x:@.get-messages
                actions
                   .
                      icon:check_circle
@@ -60,7 +70,7 @@ slots.create:aista.contacts.tickets
                         id:x:@.dp/#/*/id
                   .
                      icon:reply
-                     tooltip:Answer ticket
+                     tooltip:Reply to ticket
                      url:magic/modules/tickets/messages
                      verb:post
                      fields
