@@ -1,0 +1,30 @@
+name: Release build deploying to production environment
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  archive-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Remove files  
+        run: rm -rf .git && rm -rf .github && rm -rf .vscode && rm -rf .gitignore rm -rf .DS_Store
+      - name: Archive
+        if: success()
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./
+          dest: archive.zip
+      - name: Deploy
+        if: success()
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{secrets.PROD_URL}}/magic/system/file-system/install-module'
+          method: 'PUT'
+          customHeaders: '{
+            "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer ${{ secrets.PROD_TOKEN }}"
+            }'
+          files: '{"file": "/home/runner/work/tickets/tickets/archive.zip"}'
