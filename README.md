@@ -1,6 +1,6 @@
-# Aista's support and ticket system
+# AINIRO's support and ticket system
 
-This is [Aista](https://aista.com)'s ticket system, implying the system we're currently
+This is [AINIRO](https://ainiro.io)'s ticket system, implying the system we're currently
 actually using ourselves to give customer support and help developers with Magic and Hyperlambda.
 Since we're nice guys and gals though, we've chosen to open source license the thing,
 providing it as a plugin to your own Magic and Hyperlambda backend, allowing you to install it

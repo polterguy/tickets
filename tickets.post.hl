@@ -75,7 +75,7 @@ data.connect:[generic|tickets]
             email:x:@.email
             name:x:@.name
          config.get:"magic:tickets:admins"
-            .:"th@aista.com,mo@aista.com,sm@aista.com,ms@aista.com"
+            .:"team@ainiro.io"
          strings.split:x:@config.get
             .:,
          for-each:x:@strings.split/*
