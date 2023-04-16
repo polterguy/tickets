@@ -118,7 +118,7 @@ data.connect:[generic|tickets]
       .lambda
          unwrap:x:+/**
          signal:magic.emails.send
-            subject:Somebody commented on your ticket at Aista
+            subject:Somebody commented on your ticket at AINIRO.IO
             template-file:/modules/tickets/magic.startup/templates/message-receipt.html
             mime-type:text/html
             substitutes
