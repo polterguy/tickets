@@ -46,7 +46,7 @@ if
          .:/
       convert:x:-/0
          type:long
-      data.connect:tickets
+      data.connect:[generic|tickets]
          data.read
             table:messages
                join:tickets

@@ -87,7 +87,7 @@ data.connect:[generic|tickets]
             id.eq:x:@.arguments/*/ticket
    set-value:x:@.username
       get-value:x:@data.read/*/*/user
-   data.connect:magic
+   data.connect:[generic|magic]
       data.read
          table:users_extra
          values

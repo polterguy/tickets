@@ -22,7 +22,7 @@ if
       not
          auth.ticket.in-role:admin
    .lambda
-      data.connect:tickets
+      data.connect:[generic|tickets]
          data.read
             table:tickets
             values

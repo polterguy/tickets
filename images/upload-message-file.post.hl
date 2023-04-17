@@ -19,7 +19,7 @@ auth.ticket.verify:root, admin, guest
 
 // Ensuring user doesn't save files not belonging to his own tickets.
 auth.ticket.get
-data.connect:tickets
+data.connect:[generic|tickets]
    data.read
       table:messages
          join:tickets
