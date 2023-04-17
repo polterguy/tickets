@@ -21,7 +21,7 @@ jobs:
         if: success()
         uses: fjogeleit/http-request-action@v1
         with:
-          url: '${{secrets.PROD_URL}}/magic/system/file-system/install-module'
+          url: 'https://ainiro.io/magic/system/file-system/install-module'
           method: 'PUT'
           customHeaders: '{
             "Content-Type": "multipart/form-data",
